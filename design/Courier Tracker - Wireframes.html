@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>Courier Tracker · Wireframes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="wire-primitives.jsx"></script>
+<script type="text/babel" src="wire-landing.jsx"></script>
+<script type="text/babel" src="wire-app.jsx"></script>
+<script type="text/babel" src="wire-manager-web.jsx"></script>
+<script type="text/babel" src="wire-light.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+const { useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "showAnnotations": true
+}/*EDITMODE-END*/;
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  // Hide annotations toggle: simplest is to rerender by setting body class
+  useEffect(() => {
+    document.body.classList.toggle('hide-annotations', !t.showAnnotations);
+  }, [t.showAnnotations]);
+
+  // Phone artboards (iOS frame); landing artboards (browser-ish)
+  const PhoneArt = ({ children, dark = true }) => (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
+      <IOSDevice width={300} height={620} dark={dark}>
+        {children}
+      </IOSDevice>
+    </div>
+  );
+
+  const BrowserArt = ({ children }) => (
+    <div style={{
+      width: '100%', height: '100%', background: '#fff',
+      borderRadius: 8, overflow: 'hidden',
+      border: '1px solid rgba(0,0,0,0.1)',
+    }}>
+      {/* Browser chrome */}
+      <div style={{
+        height: 32, background: '#ececec', borderBottom: '1px solid #d6d6d6',
+        display: 'flex', alignItems: 'center', padding: '0 12px', gap: 6,
+      }}>
+        <div style={{ display: 'flex', gap: 5 }}>
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#fc625d' }} />
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#fdbc40' }} />
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#34c749' }} />
+        </div>
+        <div style={{ flex: 1, height: 18, background: '#fff', borderRadius: 4, fontSize: 10, color: '#666', display: 'flex', alignItems: 'center', justifyContent: 'center', maxWidth: 280, margin: '0 auto' }}>courier-tracker.io</div>
+      </div>
+      <div style={{ width: '100%', height: 'calc(100% - 32px)', overflow: 'auto' }}>
+        {children}
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <DesignCanvas
+        title="Courier Tracker · Wireframes"
+        subtitle="Низкофиделити-эскизы лендинга и трёх экранов приложения · по 3 варианта"
+      >
+        <DCSection
+          id="landing"
+          title="Лендинг · выбран B"
+          subtitle="Светлый редакционный — hero с картой, stats, before/after, тарифы"
+        >
+          <DCArtboard id="landing-b" label="✓ B · Светлый редакционный" width={960} height={1600}>
+            <BrowserArt><LandingB /></BrowserArt>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="manager-web"
+          title="Дашборд менеджера · выбран A"
+          subtitle="Карта + список заказов справа — светлая тема"
+        >
+          <DCArtboard id="mgr-web-a" label="✓ A · Карта + список справа" width={1280} height={780}>
+            <BrowserArt><ManagerWebALight /></BrowserArt>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="courier"
+          title="Приложение курьера · выбран C"
+          subtitle="Карта с маршрутом — курьер использует приложение для навигации"
+        >
+          <DCArtboard id="courier-c" label="✓ C · Карта с маршрутом" width={340} height={680}>
+            <PhoneArt dark={false}><CourierCLight /></PhoneArt>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="customer"
+          title="Live-трекинг · выбран C"
+          subtitle="Минималист — одна большая цифра ETA, white-label"
+        >
+          <DCArtboard id="customer-c" label="✓ C · Минималист — одна цифра" width={340} height={680}>
+            <PhoneArt dark={false}><CustomerCLight /></PhoneArt>
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Видимость">
+          <TweakToggle
+            label="Подписи-заметки"
+            value={t.showAnnotations}
+            onChange={v => setTweak('showAnnotations', v)}
+            hint="жёлтые стикеры рядом с элементами"
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+// CSS for hiding annotations via class
+const css = document.createElement('style');
+css.textContent = `
+  body.hide-annotations [data-annotation], body.hide-annotations .annotation-leader { display: none !important; }
+`;
+document.head.appendChild(css);
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

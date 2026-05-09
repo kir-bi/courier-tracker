@@ -1,0 +1,5 @@
+.DS_Store
+design-source/
+.playwright-mcp/
+*.png
+*.jpg
